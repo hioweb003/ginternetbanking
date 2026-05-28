@@ -1,0 +1,16 @@
+{
+    "name": "bgpay",
+    "short_name": "B",
+    "background_color": "#489cea",
+    "display": "fullscreen",
+    "description": "A secure and reliable digital banking platform that enables customers to manage accounts, perform transactions, and access financial services anytime, anywhere.",
+    "theme_color": "#489cea",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "http://bgpay.localhost:8001/storage/uploads/1773004655_GrubiesCore_2.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
