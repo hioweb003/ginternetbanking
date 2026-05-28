@@ -193,7 +193,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
                           "content-type" => "application/json",
                          "Authorization" => "Bearer ".$this->token
                     ])->get(config('services.api.base_url')."customers/get-transactions",[
-                        "perpage" => '3'
+                        "perpage" => '5'
                     ])->json();
 
                  if(isset($response['code']) && $response['code'] == '401'){

@@ -74,7 +74,7 @@
             }
     </style>
     </head>
-   <body class="bg-gray-100 dark:bg-gray-900 transition-all duration-500">
+   <body class="bg-white dark:bg-gray-900 transition-all duration-500">
 
     <div class="min-h-screen flex flex-col md:flex-row">
 
