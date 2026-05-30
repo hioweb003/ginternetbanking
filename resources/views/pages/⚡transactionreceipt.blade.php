@@ -69,6 +69,51 @@ new #[Layout('layouts::app',['title' => 'Transaction Receipt'])] class extends C
         }
     }
 
+    public function DownloadReciept(){
+            
+            $ref =  Crypt::decryptString($this->ref);
+
+              $resp = Http::withHeaders([
+                          "content-type" => "application/json",
+                         "Authorization" => "Bearer ".$this->token
+                    ])->get(config('services.api.base_url')."transactions/download-transaction-recipt",[
+                       'trnxid' => $ref,
+                    ])->json();
+
+
+        if(isset($resp['code']) && $resp['code'] == '401'){
+                auth()->logout();
+                    session()->flush();
+
+                    return $this->redirectRoute('home',['institution' => $this->institution_name],navigate:true);
+            }
+
+
+       
+        if($resp["status"] == true){ 
+
+                  $base64 = $resp["data"];
+
+                if (str_contains($base64, 'base64,')) {
+                    [$meta, $base64] = explode(',', $base64, 2);
+                }
+
+                $fileContent = base64_decode($base64);
+
+                $filename = 'transaction_reciept.pdf';
+
+                return response()->streamDownload(function () use ($fileContent) {
+                        echo $fileContent;
+                    },
+                    $filename,
+                    [
+                        'Content-Type' => 'application/pdf,',
+                    ]
+                );
+
+        }
+    }
+
     
 };
 ?>
@@ -145,7 +190,15 @@ new #[Layout('layouts::app',['title' => 'Transaction Receipt'])] class extends C
             <div class="flex justify-between">
                 <span class="text-gray-500">Receiver</span>
                 <span class="font-medium text-gray-500">
-                    {{$receipt['type'] == 'credit' || $receipt['type'] == 'deposit' ? ucwords(session('details')['name'] ?? "") : (isset($beneficiary[0]) ? ucwords($beneficiary[0])." | ".$beneficiary[1] ?? "" : "") }}
+                      {{
+                        $receipt['type'] == 'credit' || $receipt['type'] == 'deposit'
+                            ? ucwords(session('details')['name'] ?? '')
+                            : (
+                                isset($beneficiary[0], $beneficiary[1])
+                                    ? ucwords($beneficiary[0]) . ' | ' . $beneficiary[1]
+                                    : ''
+                            )
+                    }}
                 </span>
             </div>
           
@@ -182,13 +235,15 @@ new #[Layout('layouts::app',['title' => 'Transaction Receipt'])] class extends C
         </div>
 
         <!-- Download Button -->
-        <a 
+        {{-- <a 
              href="{{ route('dwolodrecpt',['institution' => $institution_name,'recept' => Crypt::encryptString(json_encode($receipt))]) }}"
             class="w-full bg-linear-to-r py-2 rounded-lg text-white hover:bg-gray-800 transition cursor-pointer block"
             style="background: linear-gradient(to right, {{ $institution_color  }}, {{ $institution_colortwo }});"
         >
-            Download Receipt
-        </a>
+           Download Receipt 
+        </a> --}}
+        <flux:button wire:click.prevent='DownloadReciept' class="w-full bg-linear-to-r py-2 rounded-lg text-white hover:bg-gray-800 transition cursor-pointer block"
+            style="background: linear-gradient(to right, {{ $institution_color  }}, {{ $institution_colortwo }});color: white;">Download Receipt</flux:button>
 
     </flux:card>
 </div>
