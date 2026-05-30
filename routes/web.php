@@ -12,7 +12,7 @@ Route::domain('{institution}.'.env('APP_DOMAIN'))->group(function () {
 
    Route::middleware(["tenant"])->group(function(){
 
-        //Route::get('/', [PagemgmtController::class, 'index'])->name('home');
+        Route::get('/manifest', [PagemgmtController::class, 'Manifest'])->name('manifest');
 
         Route::livewire('/', 'auth.login')->name('home');
          
@@ -66,3 +66,4 @@ Route::domain('{institution}.'.env('APP_DOMAIN'))->group(function () {
           Route::livewire('/change-password','admin.change_password')->name('changepass');
       });
    });
+

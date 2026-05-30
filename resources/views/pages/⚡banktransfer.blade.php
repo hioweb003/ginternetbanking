@@ -22,7 +22,7 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
 
     public string $accountName;
     public string $accountnumber;
-    public int $bankcode;
+    public string $bankcode;
     public string $bankname;
     public int $amount;
     public string $narration;
@@ -67,8 +67,10 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
             return $this->redirectRoute('home',['institution' => $this->institution_name],navigate:true);
         }
 
-        $this->GetBanks();
          $this->accounts = session('accounts-balance')['accounts'];
+
+        $this->GetBanks();
+
     }
 
        public function GetBalance($accounts){
@@ -105,12 +107,12 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
         }
 
     #[On('balance-loaded')]      
-    public function updateBalance($data)
+    public function updateBalance($data = [])
     {
-         Log::info('balance updated',$data['data']);
+         Log::info('balance updated',$data['data'] ?? []);
 
         session()->put("accounts-balance",[
-                "accounts" => $data['data']
+                "accounts" => $data['data'] ?? []
             ]);
     }
 
@@ -137,7 +139,7 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
             "Authorization" => "Bearer ".$this->token
         ])->get(config('services.api.base_url').'transactions/get-banks')->json();
 
-         Log::info("banks",$response);
+        // Log::info("banks",$response);
 
           if(isset($response['code']) && $response['code'] == '401'){
                 auth()->logout();
@@ -472,7 +474,7 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
         
                @if ($step == 1)
                         <!-- Search Input -->
-                <flux:input placeholder="Search Bank Name"  type="text" autocomplete='off' wire:model.live.throttle.100ms="bankname" />
+                {{-- <flux:input placeholder="Search Bank Name"  type="text" autocomplete='off' wire:model.live.throttle.100ms="bankname" />
                     <!-- List -->
                     @if ($showbanklist)
                             <ul class="space-y-2">
@@ -484,15 +486,96 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
                             <li class="p-2 text-gray-500">No results found</li>
                         @endforelse
                     </ul>
-                    @endif
+                    @endif --}}
 
-        <flux:input label="Account Number" autocomplete='off' wire:model.live="accountnumber" placeholder="Your account number" />
-            {{-- <flux:icon.loading wire:loading wire:target="accountnumber" class="text-black dark:text-white float-right my-2" /> --}}
+                    <div
+    x-data="{
+        search: @entangle('bankname'),
+        selected: '',
+        show: false,
+
+        banks: @js($banks),
+
+        get filteredBanks() {
+
+            if (this.search === '') {
+                return this.banks;
+            }
+
+            return this.banks.filter(bank =>
+                bank.bank_name
+                    .toLowerCase()
+                    .includes(this.search.toLowerCase())
+            );
+        }
+    }"
+
+    class="relative"
+>
+
+    <!-- Input -->
+    <flux:input
+        type="text"
+        placeholder="Search Bank Name"
+
+        x-model="search"
+
+        @focus="show = true"
+
+        @click.away="show = false"
+    />
+
+    <!-- Dropdown -->
+    <div
+        x-show="show"
+        x-transition
+        class="absolute z-50 w-full mt-2"
+    >
+
+        <ul class="space-y-2 max-h-72 overflow-y-auto bg-gray-100 dark:bg-gray-900 p-2 rounded-xl shadow-lg">
+
+            <template x-for="bank in filteredBanks" :key="bank.bank_code">
+
+                <li
+                    class="p-2 bg-white shadow-md dark:bg-gray-800 dark:hover:bg-white rounded dark:hover:text-gray-800 hover:text-white hover:bg-gray-800 cursor-pointer"
+
+                    @click="
+                        search = bank.bank_name;
+                        show = false;
+
+                        $wire.selectBank(
+                            bank.bank_code,
+                            bank.bank_name
+                        );
+                    "
+                >
+
+                    <span x-text="bank.bank_name"></span>
+
+                </li>
+
+            </template>
+
+            <li
+                x-show="filteredBanks.length === 0"
+                class="p-2 text-gray-500"
+            >
+                No results found
+            </li>
+
+        </ul>
+
+    </div>
+
+</div>
+
+        <flux:input label="Account Number" autocomplete='off' wire:model.live.debounce.700ms="accountnumber" placeholder="Your account number" />
+            {{-- <flux:icon.loading wire:loading.flex wire:target="accountnumber" class="text-black dark:text-white float-right my-2" /> --}}
 
         <flux:text class="text-green-500 dark:text-green-400 text-center text-base space-y-4">{{$accountName}}</flux:text>
 
          <div class="space-y-2">
-                 <flux:button style="background-color: {{ $institution_color }}" wire:show='showamount' wire:click="nextstep" class="w-full cursor-pointer">Continue</flux:button>
+                 <flux:button style="background-color: {{ $institution_color }}; color: #ffffff" wire:show='showamount' wire:click="nextstep" class="w-full cursor-pointer">Continue</flux:button>
             </div>
 
                 <div x-data="{ tab: 'recettrnx' }" class="w-full">
@@ -526,7 +609,7 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
                                     @if(!empty($item['bankcode']) && !empty($item['accountNumber']) && !empty($item['bankname']))
                                     <div class="p-2 bg-white shadow-md dark:bg-gray-800 rounded hover:bg-zinc-100 hover:text-[#16262f] cursor-pointer" 
                                       @click="$wire.selectRecentTransaction(
-                                                '{{ (int)$item['bankcode'] }}',
+                                                '{{ $item['bankcode'] }}',
                                                 '{{ ucwords($item['bankname']) }}',
                                                 '{{ $item['accountNumber'] }}'
                                             )"
@@ -560,7 +643,7 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
                             <div x-show="tab === 'beneficy'" wire:init='GetBeneficiaryBanks'>
                                <div class="max-h-72 overflow-y-auto space-y-2 pr-1">
                                 @foreach ($beneficiaries as $item)
-                            <div class="p-2 bg-white shadow-md dark:bg-gray-800 rounded hover:bg-zinc-100 hover:text-[#16262f] cursor-pointer" wire:click="selectBeneficiary('{{(int)$item['bank_code']}}', '{{ucwords($item['bank_name'])}}','{{ $item['account_number'] }}')">
+                            <div class="p-2 bg-white shadow-md dark:bg-gray-800 rounded hover:bg-zinc-100 hover:text-[#16262f] cursor-pointer" wire:click="selectBeneficiary('{{$item['bank_code']}}', '{{ucwords($item['bank_name'])}}','{{ $item['account_number'] }}')">
                                  <div class="flex items-center justify-between">
 
                                 <div>
@@ -631,7 +714,7 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
                  <flux:textarea rows="1" label="Narration" autocomplete='off' wire:model="narration" placeholder="Narration (optional)" />
 
           <div class="space-y-3 mt-3">
-                <flux:button style="color: white; background-color: {{ $institution_color }}" wire:click="AccountTodebitTransfer"  class="w-full cursor-pointer">Continue</flux:button>
+                <flux:button style="color: white; background-color: {{ $institution_color }}; color: #ffffff" wire:click="AccountTodebitTransfer"  class="w-full cursor-pointer">Continue</flux:button>
              <flux:button  wire:click="prevstep" variant="filled" class="w-full cursor-pointer" :loading="false">Back</flux:button>
 
             </div>
@@ -693,7 +776,7 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
                 </div>
 
             <div class="space-y-3 mt-3">
-                <flux:button style="color: white; background-color: {{ $institution_color }}" wire:click="ComfirmTransferPin"  class="w-full cursor-pointer">Transfer</flux:button>
+                <flux:button style="color: white; background-color: {{ $institution_color }}; color: #ffffff" wire:click="ComfirmTransferPin"  class="w-full cursor-pointer">Transfer</flux:button>
              <flux:button  wire:click="prevstep" variant="filled" class="w-full cursor-pointer" :loading="false">Back</flux:button>
 
             </div>
@@ -742,10 +825,10 @@ new #[Layout('layouts::app',['title' => 'Bank Transfer'])] class extends Compone
          
         <flex:text  class="text-gray-500 text-center">Transaction Pin</flex:text>
          <div x-data class="flex justify-center mt-4" id="inputs">
-                <flux:input type="password" style="text-align: center !important" size="1" maxlength="1" wire:model.live="transpin.0" pattern="[0-9]*" inputmode="numeric" x-ref="p0"  @input="$refs.p1.focus()" class="mx-1 w-12 text-center" />
-                <flux:input type="password" style="text-align: center !important" size="1" maxlength="1" wire:model.live="transpin.1" pattern="[0-9]*" inputmode="numeric" x-ref="p1"  @input="$refs.p2.focus()" @keydown.backspace="if (!$event.target.value) {$wire.set('transpin.1', '');$refs.p0.focus();} else {$event.target.value = '';$wire.set('transpin.1', ''); }" class="mx-1 w-12 text-center" />
-                <flux:input type="password" style="text-align: center !important" size="1" maxlength="1" wire:model.live="transpin.2" pattern="[0-9]*" inputmode="numeric" x-ref="p2"  @input="$refs.p3.focus()" @keydown.backspace="if (!$event.target.value) {$wire.set('transpin.2', '');$refs.p1.focus();} else {$event.target.value = '';$wire.set('transpin.2', ''); }" class="mx-1 w-12 text-center" />
-                <flux:input type="password" style="text-align: center !important" size="1" maxlength="1" wire:model.live="transpin.3" pattern="[0-9]*" inputmode="numeric" x-ref="p3"  @keydown.backspace="if (!$event.target.value) {$wire.set('transpin.3', '');$refs.p2.focus();} else {$event.target.value = '';$wire.set('transpin.3', ''); }" class="mx-1 w-12 text-center" />
+                <flux:input type="password" :loading="false" style="text-align: center !important" size="1" maxlength="1" wire:model.live="transpin.0" pattern="[0-9]*" inputmode="numeric" x-ref="p0"  @input="$refs.p1.focus()" class="mx-1 w-12 text-center" />
+                <flux:input type="password" :loading="false" style="text-align: center !important" size="1" maxlength="1" wire:model.live="transpin.1" pattern="[0-9]*" inputmode="numeric" x-ref="p1"  @input="$refs.p2.focus()" @keydown.backspace="if (!$event.target.value) {$wire.set('transpin.1', '');$refs.p0.focus();} else {$event.target.value = '';$wire.set('transpin.1', ''); }" class="mx-1 w-12 text-center" />
+                <flux:input type="password" :loading="false" style="text-align: center !important" size="1" maxlength="1" wire:model.live="transpin.2" pattern="[0-9]*" inputmode="numeric" x-ref="p2"  @input="$refs.p3.focus()" @keydown.backspace="if (!$event.target.value) {$wire.set('transpin.2', '');$refs.p1.focus();} else {$event.target.value = '';$wire.set('transpin.2', ''); }" class="mx-1 w-12 text-center" />
+                <flux:input type="password" :loading="false" style="text-align: center !important" size="1" maxlength="1" wire:model.live="transpin.3" pattern="[0-9]*" inputmode="numeric" x-ref="p3"  @keydown.backspace="if (!$event.target.value) {$wire.set('transpin.3', '');$refs.p2.focus();} else {$event.target.value = '';$wire.set('transpin.3', ''); }" class="mx-1 w-12 text-center" />
         </div>
          <div class="space-y-3 mt-3">
                 <flux:button style="color: white; background-color: {{ $institution_color }}" wire:click="MakeTransfer"  class="w-full cursor-pointer">Confirm</flux:button>

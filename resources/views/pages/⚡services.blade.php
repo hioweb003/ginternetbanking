@@ -57,7 +57,7 @@ new #[Layout('layouts::app',['title' => 'Services'])] class extends Component
                     <i class="fa fa-wallet text-black dark:text-white text-lg"></i>
                 </div>
 
-                <span class="text-sm text-black dark:text-white">To Other Bank</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">To Other Bank</span>
             </div>
             </a>
             
@@ -68,7 +68,7 @@ new #[Layout('layouts::app',['title' => 'Services'])] class extends Component
                     <i class="fa fa-exchange text-black dark:text-white text-lg"></i>
                 </div>
 
-                <span class="text-sm text-black dark:text-white">Wallet Transfer</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Wallet Transfer</span>
             </div>
             </a>
 
@@ -78,7 +78,7 @@ new #[Layout('layouts::app',['title' => 'Services'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center mb-2">
                     <i class="fa fa-signal text-black dark:text-white text-lg"></i>
                 </div>
-                <span class="text-sm text-black dark:text-white">Airtime</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Airtime</span>
             </div>
             </a>
 
@@ -88,7 +88,7 @@ new #[Layout('layouts::app',['title' => 'Services'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center mb-2">
                     <i class="fa fa-wifi text-black dark:text-white text-lg"></i>
                 </div>
-                <span class="text-sm text-black dark:text-white">Buy Data</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Buy Data</span>
             </div>
         </a>
 
@@ -98,7 +98,7 @@ new #[Layout('layouts::app',['title' => 'Services'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center mb-2">
                     <i class="fa fa-television text-black dark:text-white text-lg"></i>
                 </div>
-                <span class="text-sm text-black dark:text-white">Cable TV</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Cable TV</span>
             </div>
             </a>
 
@@ -109,7 +109,7 @@ new #[Layout('layouts::app',['title' => 'Services'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center mb-2">
                     <i class="fa fa-lightbulb text-black dark:text-white text-lg"></i>
                 </div>
-                <span class="text-sm text-black dark:text-white">Electricity</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Electricity</span>
             </div>
             </a>
 
@@ -118,14 +118,14 @@ new #[Layout('layouts::app',['title' => 'Services'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-orange-900 flex items-center justify-center mb-2">
                     <i class="fa fa-futbol text-orange-400 text-lg"></i>
                 </div>
-                <span class="text-sm text-gray-300">Sports</span>
+                <span class="text-sm text-gray-300 whitespace-nowrap">Sports</span>
             </div>
              <!-- Item -->
             <div class="bg-gray-900 hover:bg-gray-800 transition rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer">
                 <div class="w-12 h-12 rounded-full bg-orange-900 flex items-center justify-center mb-2">
                     <i class="fa fa-piggy-bank text-orange-400 text-lg"></i>
                 </div>
-                <span class="text-sm text-gray-300">Savings</span>
+                <span class="text-sm text-gray-300 whitespace-nowrap">Savings</span>
             </div>
 
             <!-- Item -->
@@ -133,7 +133,7 @@ new #[Layout('layouts::app',['title' => 'Services'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-orange-900 flex items-center justify-center mb-2">
                     <i class="fa fa-hand-holding-usd text-orange-400 text-lg"></i>
                 </div>
-                <span class="text-sm text-gray-300">Loan</span>
+                <span class="text-sm text-gray-300 whitespace-nowrap">Loan</span>
             </div> --}}
 
         </div>

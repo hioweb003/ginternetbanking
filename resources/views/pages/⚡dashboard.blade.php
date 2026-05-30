@@ -298,7 +298,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
                     <div class="text-right">
                         <div class="flex justify-end mx-2 my-2 md:mx-4 md:my-4">
                             <div class="bg-white/20 px-4 py-2 rounded-lg backdrop-blur-md">
-                               <small class="font-normal text-center">Tier 1</small>
+                               <small class="font-normal text-center">{{ucwords(session('details')["tier"] ?? "")}}</small>
                             </div>
                         </div>
                     </div>
@@ -336,7 +336,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
                     <i class="fa fa-wallet text-black dark:text-white text-lg"></i>
                 </div>
 
-                <span class="text-sm text-black dark:text-white">To Other Bank</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">To Other Bank</span>
             </div>
             </a>
             
@@ -347,7 +347,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
                     <i class="fa fa-exchange text-black dark:text-white text-lg"></i>
                 </div>
 
-                <span class="text-sm text-black dark:text-white">Wallet Transfer</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Wallet Transfer</span>
             </div>
             </a>
 
@@ -357,7 +357,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center mb-2">
                     <i class="fa fa-signal text-black dark:text-white text-lg"></i>
                 </div>
-                <span class="text-sm text-black dark:text-white">Airtime</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Airtime</span>
             </div>
             </a>
 
@@ -367,7 +367,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center mb-2">
                     <i class="fa fa-wifi text-black dark:text-white text-lg"></i>
                 </div>
-                <span class="text-sm text-black dark:text-white">Buy Data</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Buy Data</span>
             </div>
         </a>
 
@@ -377,7 +377,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center mb-2">
                     <i class="fa fa-television text-black dark:text-white text-lg"></i>
                 </div>
-                <span class="text-sm text-black dark:text-white">Cable TV</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Cable TV</span>
             </div>
             </a>
 
@@ -388,7 +388,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
                 <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center mb-2">
                     <i class="fa fa-lightbulb text-black dark:text-white text-lg"></i>
                 </div>
-                <span class="text-sm text-black dark:text-white">Electricity</span>
+                <span class="text-sm text-black dark:text-white whitespace-nowrap">Electricity</span>
             </div>
             </a>
 

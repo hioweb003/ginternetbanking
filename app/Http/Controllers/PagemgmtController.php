@@ -8,22 +8,24 @@ use Illuminate\Http\Request;
 use EragLaravelPwa\Facades\PWA;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Soap\Url;
 
 class PagemgmtController extends Controller
 {
     public function index(Request $r)
-    {
+    {   
+         //    $getinst = Institution::where('name', $tenant->name)->firstOrFail();
+
           //$r->institution;
         $tenant = app('tenant');
 
      
-    //    $getinst = Institution::where('name', $tenant->name)->firstOrFail();
 
         if ($tenant->status == 1) {
 
             $logo = app()->environment('production')
-                ? url(env('STORAGE_PATH') . $tenant->logo)
-                : asset('storage/' . $tenant->logo);
+                ? url('/').env('STORAGE_PATH') . $tenant->logo
+                : asset('storage/' . $tenant->logo); 
 
             PWA::update([
                 'name' => $tenant->name,
@@ -32,11 +34,13 @@ class PagemgmtController extends Controller
                 'display' => 'fullscreen',
                 'description' => 'A secure and reliable digital banking platform that enables customers to manage accounts, perform transactions, and access financial services anytime, anywhere.',
                 'theme_color' => $tenant->color_one,
+                "start_url" => "/",
                 'icons' => [
                     [
                         'src' => $logo,
                         'sizes' => '512x512',
                         'type' => 'image/png',
+                        'purpose' => 'any maskable',
                     ],
                 ],
             ]);
@@ -56,6 +60,34 @@ class PagemgmtController extends Controller
         // return view('welcome');   
         
        
+    }
+
+    public function Manifest(){
+
+            $tenant = app('tenant');
+            $logo = app()->environment('production')
+                ? url('/').env('STORAGE_PATH') . $tenant->logo
+                : asset('storage/' . $tenant->logo);
+                
+      return response()->json([
+       
+                'name' => $tenant->name,
+                'short_name' => $this->shortName($tenant->name),
+                'background_color' => $tenant->color_one,
+                'display' => 'fullscreen',
+                'description' => 'A secure and reliable digital banking platform that enables customers to manage accounts, perform transactions, and access financial services anytime, anywhere.',
+                'theme_color' => $tenant->color_one,
+                "start_url" => "/",
+                'icons' => [
+                    [
+                        'src' => $logo,
+                        'sizes' => '512x512',
+                        'type' => 'image/png',
+                        'purpose' => 'any maskable',
+                    ],
+                ],
+            
+    ]);
     }
 
     public function AdminLogin(){
@@ -98,9 +130,15 @@ $recpt = Crypt::decryptString(request()->recept);
 
 $receipt = json_decode($recpt,true);
 
-             $pdf = Pdf::loadView('receipt', [
+//dd(Url('/').'/'.env('STORAGE_PATH').app('tenant')->logo);
+            // $pdf = pdf::loadView('receipt', [
+            //     'institutionname' => app('tenant')->fullname,
+            //     'receipt' =>  $receipt
+            // ]);
+
+             $pdf = pdf::loadView('receipt', [
                 'institutionname' => app('tenant')->fullname,
-                'institution_logo' => app('tenant')->logo,
+                'institution_logo' => Url('/').'/'.env('STORAGE_PATH').app('tenant')->logo,
                 'receipt' =>  $receipt
              ]);
 

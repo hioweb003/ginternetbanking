@@ -4,10 +4,13 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use \App\Models\Institution;
+use Livewire\WithFileUploads;
 
 new #[Layout('layouts::admin',['title' => 'Edit Institution'])] class extends Component
 {
  
+   use WithFileUploads;
+
     #[Validate('required|string')]
     public $name;
     

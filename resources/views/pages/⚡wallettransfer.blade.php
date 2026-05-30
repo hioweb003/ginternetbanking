@@ -90,12 +90,12 @@ new #[Layout('layouts::app',['title' => 'Wallet Transfer'])] class extends Compo
         }
 
     #[On('balance-loaded')]      
-    public function updateBalance($data)
+    public function updateBalance($data = [])
     {
-         Log::info('balance updated',$data['data']);
+         Log::info('balance updated',$data['data'] ?? []);
 
         session()->put("accounts-balance",[
-                "accounts" => $data['data']
+                "accounts" => $data['data'] ?? []
             ]);
     }
 
@@ -361,7 +361,7 @@ new #[Layout('layouts::app',['title' => 'Wallet Transfer'])] class extends Compo
           
                @if ($step == 1)
                    
-        <flux:input label="Account Number" autocomplete='off' wire:model.live="accountnumber" placeholder="Your account number" />
+        <flux:input label="Account Number" autocomplete='off' wire:model.live.debounce.700ms="accountnumber" placeholder="Your account number" />
             {{-- <flux:icon.loading wire:loading wire:target="accountnumber" class="text-black dark:text-white float-right my-2" /> --}}
 
         <flux:text class="text-green-500 dark:text-green-400 text-center text-base space-y-4">{{$accountName}}</flux:text>

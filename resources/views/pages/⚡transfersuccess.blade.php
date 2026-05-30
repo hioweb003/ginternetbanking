@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Layout;
@@ -9,18 +10,18 @@ use Livewire\Component;
 new #[Layout('layouts::app',['title' => 'Success page'])] class extends Component
 {
     public ?string $token;
-      public string $institution_code;
+    public string $institution_code;
     public string $institution_color;
     public string $institution_colortwo;
     public string $institution_logo;
     public string $institution_name;   
     public string $institution_fullname;  
     
-     #[Url(history: true)]
-    public string $data;
+    #[Url(as: 'data',history: true)]
+    public ?string $data = null;
     
     #[Url(history: true)]
-    public string $ty;
+    public string $ty ="";
 
     public string $bankcode;
     public string $bankname;
@@ -39,7 +40,7 @@ new #[Layout('layouts::app',['title' => 'Success page'])] class extends Componen
         "data" => "Your data puchase was completed successfully.",
         "airtime" => "Your airtime puchase was completed successfully.",
         "cable" => "Your cable Tv subcription is completed successfully.",
-        "electric" => "Your puchase of electricity was completed successfully.",
+        "electricity" => "Your puchase of electricity was completed successfully.",
         "transfer" => "Your transfer was completed successfully."
     ]; 
 
@@ -64,20 +65,34 @@ new #[Layout('layouts::app',['title' => 'Success page'])] class extends Componen
             return $this->redirectRoute('home',['institution' => $this->institution_name],navigate:true);
         }
 
-        $data = Crypt::decrypt($this->data);
+       // 1. Check if the URL data parameter is completely empty
+    if (empty($this->data)) {
+        // Handle gracefully: Redirect away or initialize empty defaults
+        return redirect()->route('dashboard')->with('error', 'Invalid reference payload.');
+    }
 
-        $this->reference = Crypt::encryptString($data['ref']);
+    try {
+        // 2. Attempt to decrypt the data safely
+        $dataa = Crypt::decrypt($this->data);
 
-        $this->bankcode = $data["bankcode"] ?? "";
-        $this->bankname = $data['bankname'] ?? "";
-        $this->accountno = $data['accountno'] ?? "";
-        $this->accountname = $data['accountname'] ?? "";
-        $this->billerno = $data['billerno'] ?? "";
-        $this->billername = $data['billername'] ?? "";
-        $this->eletoken = $data['token'] ?? "";
-        $this->unit = $data['unit'] ?? "";
-        $this->type = $data['type'];
-        $this->isbenfi = $data['is_benfi'] ?? false;
+        // 3. Assign properties only if decryption succeeds
+        if (is_array($dataa)) {
+            $this->reference = isset($dataa['ref']) ? Crypt::encryptString($dataa['ref']) : "";
+            $this->bankcode = $dataa["bankcode"] ?? "";
+            $this->bankname = $dataa['bankname'] ?? "";
+            $this->accountno = $dataa['accountno'] ?? "";
+            $this->accountname = $dataa['accountname'] ?? "";
+            $this->billerno = $dataa['billerno'] ?? "";
+            $this->billername = $dataa['billername'] ?? "";
+            $this->eletoken = $dataa['token'] ?? "";
+            $this->unit = $dataa['unit'] ?? "";
+            $this->type = $dataa['type'] ?? "";
+            $this->isbenfi = $dataa['is_benfi'] ?? false;
+        }
+    } catch (DecryptException $e) {
+        // 4. Catch tampered or expired encrypted payloads instead of crashing
+        return redirect()->route('dashboard')->with('error', 'Session reference expired.');
+    }
 
     }
 
@@ -123,6 +138,7 @@ new #[Layout('layouts::app',['title' => 'Success page'])] class extends Componen
                 );
         }
     }
+
 
 };
 ?>

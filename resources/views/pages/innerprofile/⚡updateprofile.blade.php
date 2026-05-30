@@ -33,7 +33,7 @@ new #[Layout('layouts::app',['title' => 'Update Profile'])] class extends Compon
         $this->institution_logo = app()->environment('production')
                 ? url(env('STORAGE_PATH') . app('tenant')->logo)
                 : asset('storage/' . app('tenant')->logo);
-
+                
        $this->token = session('access_token');
        $expiresAt = session('access_token_expires_at');
 

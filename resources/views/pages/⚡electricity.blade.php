@@ -4,6 +4,7 @@ use Flux\Flux;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -71,12 +72,12 @@ new #[Layout('layouts::app',['title' => 'Buy Electricity'])] class extends Compo
     }
 
       #[On('balance-loaded')]      
-    public function updateBalance($data)
+    public function updateBalance($data = [])
     {
-         Log::info('balance updated',$data['data']);
+         Log::info('balance updated',$data['data'] ?? []);
 
         session()->put("accounts-balance",[
-                "accounts" => $data['data']
+                "accounts" => $data['data'] ?? []
             ]);
     }
 
@@ -87,7 +88,7 @@ new #[Layout('layouts::app',['title' => 'Buy Electricity'])] class extends Compo
 public function updatedDiscos($value)
 {
     $selected = collect($this->GetElectricityList)
-        ->firstWhere('variation_code', $value);
+        ->firstWhere('value', $value);
 
     if ($selected) {
 
@@ -99,9 +100,8 @@ public function updatedDiscos($value)
     public function AccountTodebitTransfer(){
         
        $this->validate([
-            "cable" => "required|string",
-            "cable_plan" => "required|string",
-            'meter_number' => "required|numeric|digits:15"
+            "discos" => "required|string",
+            'meter_number' => "required|numeric|min:11"
       ]);
 
 
@@ -110,16 +110,16 @@ public function updatedDiscos($value)
 
     public function Verifymeter(){
          $this->validate([
-            'meter_number' => "required|numeric|digits:15"
+            'meter_number' => "required|numeric|min:11"
        ]);
 
          $response = Http::withHeaders([
              "content-type" => "application/json",
             "Authorization" => "Bearer ".$this->token
          ])->post(config('services.api.base_url').'transactions/verify-meter',[
-             "meter_number" => "45062985184",
-            "service_provider" =>  "ikeja-electric",
-            "meter_type" => "prepaid"
+            "meter_number" => (int)$this->meter_number,
+            "service_provider" =>  $this->discos,
+            "meter_type" => $this->meter_type
          ])->json();
 
      
@@ -130,7 +130,7 @@ public function updatedDiscos($value)
 
              $this->dispatch('notify', 
                     title: 'Error',
-                    message: "Failed to verify cabletv. Please try again later.",
+                    message: $response["message"] ?? "Failed to verify meter number. Please try again later.",
                     type: 'error'
                 );
          }
@@ -157,9 +157,9 @@ public function updatedDiscos($value)
             "content-type" => "application/json",
             "Authorization" => "Bearer ".$this->token
        ])->post(config('services.api.base_url').'transactions/pay-electricty',[
-            'meter_number' => $this->meter_number,
-            'phone_number' => $this->phone_number,
-            'amount' => $this->amount,
+            'meter_number' => (int)$this->meter_number,
+            'phone_number' => (int)$this->phone_number,
+            'amount' => (int)$this->amount,
             'service_provider' => $this->discos,
             'meter_type' => $this->meter_type,
             'pin' => implode("", $this->transpin),
@@ -201,14 +201,14 @@ public function updatedDiscos($value)
 
               $this->dispatch('notify', 
                     title: 'Error',
-                    message: $response["message"] ?? "Failed to purchase cableTv. Please try again later.",
+                    message: $response["message"] ?? "Failed to purchase electricity. Please try again later.",
                     type: 'error'
                 );
         }
 
     }
 
-
+#[Computed()]
 public function GetElectricityList(){
 
     $eledata_array = [
@@ -284,23 +284,24 @@ public function GetElectricityList(){
     <div class="space-y-6">
         @if ($step == 1)
             <flux:select size="sm" wire:model="meter_type" placeholder="Select Meter Type...">  
-                     <flux:select.option value="">Select</flux:select.option>
+                     <flux:select.option value="">Select Meter Type</flux:select.option>
                      <flux:select.option value="prepaid">Prepaid</flux:select.option>
                      <flux:select.option value="postpaid">Postpaid</flux:select.option>
         </flux:select>
         
         <flux:select size="sm" wire:model="discos" placeholder="Select Disco...">  
-                     <flux:select.option value="">Select</flux:select.option>
-                     @foreach ($this->GetElectricityList() as $key => $item)
-                          <flux:select.option value="{{ $item["value"] }}">{{$item["name"]}}</flux:select.option>
-                     @endforeach
-                    
+                     <flux:select.option value="">Select Disco</flux:select.option>
+                   @foreach ($this->GetElectricityList() as $item)
+                         <flux:select.option value="{{ $item['value'] }}" wire:key="disco-{{ $item['value'] }}">
+                             {{ $item['name'] }}
+                         </flux:select.option>
+                    @endforeach
         </flux:select>
 
          <flux:input label="Meter Number" wire:model="meter_number" placeholder="Enter Meter Number" />
 
          <div class="space-y-2">
-                 <flux:button style="background-color: {{ $institution_color }}" wire:click="Verifymeter"  class="w-full cursor-pointer">Verify</flux:button>
+                 <flux:button style="background-color: {{ $institution_color }};color:#ffffff" wire:click="Verifymeter"  class="w-full cursor-pointer">Verify</flux:button>
             </div>
       
             @endif
@@ -351,7 +352,7 @@ public function GetElectricityList(){
          </div>
 
          <div class="space-y-2">
-                 <flux:button style="background-color: {{ $institution_color }}" wire:click="AccountTodebitTransfer"  class="w-full cursor-pointer">Continue</flux:button>
+                 <flux:button style="background-color: {{ $institution_color }};color:#ffffff" wire:click="AccountTodebitTransfer"  class="w-full cursor-pointer">Continue</flux:button>
             </div>
             @endif
 
@@ -386,7 +387,7 @@ public function GetElectricityList(){
                 </div>
                 <div class="flex justify-between items-center">
                     <flux:text class="text-gray-500">Provider</flux:text>
-                    <flux:text class="font-semibold">{{ $providername }}</flux:text>
+                    <flux:text class="font-semibold">{{ $providerName }}</flux:text>
                 </div>
                 <div class="flex justify-between items-center">
                     <flux:text class="text-gray-500"></flux:text>
@@ -401,7 +402,7 @@ public function GetElectricityList(){
             </div>
                 
                   <div class="space-y-3 mt-3">
-                <flux:button style="color: white; background-color: {{ $institution_color }}" wire:click="ComfirmTransferPin"  class="w-full cursor-pointer">Confirm</flux:button>
+                <flux:button style="color: white; background-color: {{ $institution_color }};color:#ffffff" wire:click="ComfirmTransferPin"  class="w-full cursor-pointer">Confirm</flux:button>
              <flux:button   wire:click="prevstep"  variant="filled" class="w-full cursor-pointer" :loading="false">Back</flux:button>
 
             </div>
@@ -428,7 +429,7 @@ public function GetElectricityList(){
                  <div class="flex justify-between items-center">
                      <flux:button  wire:click="closeModal('selectdebitacct')" variant="filled" class="w-full mx-1 cursor-pointer" :loading="false">Cancel</flux:button>
 
-                  <flux:button style="color: white; background-color: {{ $institution_color }}" wire:click="ElectricConfirmDetails"  class="w-full mx-1 cursor-pointer">Continue</flux:button>
+                  <flux:button style="color: white; background-color: {{ $institution_color }};color:#ffffff" wire:click="ElectricConfirmDetails"  class="w-full mx-1 cursor-pointer">Continue</flux:button>
             </div>
         </div>
     </div>
@@ -449,7 +450,7 @@ public function GetElectricityList(){
                 <flux:input type="password" style="text-align: center !important" size="1" maxlength="1" wire:model.live="transpin.3" pattern="[0-9]*" inputmode="numeric" x-ref="p3"  @keydown.backspace="if (!$event.target.value) {$wire.set('transpin.3', '');$refs.p2.focus();} else {$event.target.value = '';$wire.set('transpin.3', ''); }" class="mx-1 w-12 text-center" />
         </div>
          <div class="space-y-3 mt-3">
-                <flux:button style="color: white; background-color: {{ $institution_color }}" wire:click="BuyElectricity"  class="w-full cursor-pointer">Buy Electicity</flux:button>
+                <flux:button style="color: white; background-color: {{ $institution_color }};color:#ffffff" wire:click="BuyElectricity"  class="w-full cursor-pointer">Buy Electicity</flux:button>
              <flux:button  wire:click="closeModal('confirmpin')" variant="filled" class="w-full cursor-pointer" :loading="false">Cancel</flux:button>
 
             </div>   

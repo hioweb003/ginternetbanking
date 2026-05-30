@@ -72,12 +72,12 @@ new #[Layout('layouts::app',['title' => 'Buy Data'])] class extends Component
 
 
       #[On('balance-loaded')]      
-    public function updateBalance($data)
+    public function updateBalance($data = [])
     {
-         Log::info('balance updated',$data['data']);
+         Log::info('balance updated',$data['data'] ?? []);
 
         session()->put("accounts-balance",[
-                "accounts" => $data['data']
+                "accounts" => $data['data'] ?? []
             ]);
     }
 

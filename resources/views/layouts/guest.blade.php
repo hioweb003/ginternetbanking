@@ -11,7 +11,7 @@
 <title>{{$title ?? "Login"}}</title>
  @PwaHead
  <link rel="shortcut icon" href="{{$logo}}">
-
+<link rel="manifest" href="{{ route('manifest',['institution' => app('tenant')->name]) }}">
  @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">

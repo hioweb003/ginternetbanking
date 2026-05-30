@@ -95,16 +95,10 @@
 <div class="container">
 
     <div class="card">
-        <?php 
-            
-           $logo = app()->environment('production')
-                ? public_path(env('STORAGE_PATH') .$institution_logo)
-                : public_path('storage/' . $institution_logo); 
-
-            ?>
+      
         <!-- Logo -->
         <div class="logo">
-            <img src="{{ $logo }}" alt="">
+            <img src="{{ $institution_logo }}" alt="">
         </div>
 
         <div class="divider"></div>
@@ -145,7 +139,15 @@
             <div class="row">
                 <span>Sender</span>
                 <span>
-                     {{ $receipt['type'] == 'credit' || $receipt['type'] == 'deposit' ? (isset($beneficiary[0]) ? ucwords($beneficiary[0])." | ".$beneficiary[1] : ucwords(session('details')['name'] ?? "")) : ucwords(session('details')['name'] ?? "")}}
+                    @if($receipt['type'] == 'credit' || $receipt['type'] == 'deposit')
+                        @if(isset($beneficiary[0]))
+                            {{ ucwords($beneficiary[0]) }} {{ isset($beneficiary[1]) ? " | " . $beneficiary[1] : "" }}
+                        @else
+                            {{ ucwords(session('details')['name'] ?? '') }}
+                        @endif
+                    @else
+                        {{ ucwords(session('details')['name'] ?? '') }}
+                    @endif
                 </span>
             </div>
 

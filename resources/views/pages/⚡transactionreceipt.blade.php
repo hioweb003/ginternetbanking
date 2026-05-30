@@ -129,7 +129,15 @@ new #[Layout('layouts::app',['title' => 'Transaction Receipt'])] class extends C
             <div class="flex justify-between">
                 <span class="text-gray-500">Sender</span>
                 <span class="font-medium text-gray-500">
-                    {{ $receipt['type'] == 'credit' || $receipt['type'] == 'deposit' ? (isset($beneficiary[0]) ? ucwords($beneficiary[0])." | ".$beneficiary[1] : ucwords(session('details')['name'] ?? "")) : ucwords(session('details')['name'] ?? "")}}
+                    @if($receipt['type'] == 'credit' || $receipt['type'] == 'deposit')
+                        @if(isset($beneficiary[0]))
+                            {{ ucwords($beneficiary[0]) }} {{ isset($beneficiary[1]) ? " | " . $beneficiary[1] : "" }}
+                        @else
+                            {{ ucwords(session('details')['name'] ?? '') }}
+                        @endif
+                    @else
+                        {{ ucwords(session('details')['name'] ?? '') }}
+                    @endif
                 </span>
             </div>
 

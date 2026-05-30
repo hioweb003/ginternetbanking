@@ -214,7 +214,7 @@ function applyTheme() {
 // Run on first load
 document.addEventListener("DOMContentLoaded", applyTheme);
 
-// 🔑 Run after EVERY Livewire navigation
+// ðŸ”‘ Run after EVERY Livewire navigation
 document.addEventListener("livewire:navigated", applyTheme);
 
 // Toggle stays global
