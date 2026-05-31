@@ -60,7 +60,7 @@
         </flux:sidebar.nav>
 
         <flux:dropdown position="top" align="start" class="max-lg:hidden">
-            <flux:sidebar.profile avatar="{{ asset('img/userface.jpg') }}" name="{{Auth::user()->name}}" />
+            <flux:sidebar.profile avatar="{{ asset('img/userface.jpg') }}" name="{{Auth::user()->name ?? 'admin'}}" />
 
             
             <flux:menu>
@@ -76,32 +76,12 @@
         </flux:dropdown>
     </flux:sidebar>
 
-    {{-- <flux:header class="lg:hidden">
-        <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
-
-        <flux:spacer />
-
-        <flux:dropdown position="top" alignt="start">
-            <flux:profile avatar="https://fluxui.dev/img/demo/user.png" />
-
-            <flux:menu>
-                <flux:menu.radio.group>
-                    <flux:menu.radio checked>Olivia Martin</flux:menu.radio>
-                    <flux:menu.radio>Truly Delta</flux:menu.radio>
-                </flux:menu.radio.group>
-
-                <flux:menu.separator />
-
-                <flux:menu.item icon="arrow-right-start-on-rectangle">Logout</flux:menu.item>
-            </flux:menu>
-        </flux:dropdown>
-    </flux:header> --}}
 
     <flux:main >
        
 
          {{ $slot }} 
-    </flux:main>
+</flux:main>
 
     @fluxScripts
     <script src="{{asset('js/sweetalert.js')}}" ></script>
@@ -124,24 +104,24 @@
             }
         });
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const themeToggle = document.getElementById("theme-toggle");
-            const htmlElement = document.documentElement;
+        // document.addEventListener("DOMContentLoaded", () => {
+        //     const themeToggle = document.getElementById("theme-toggle");
+        //     const htmlElement = document.documentElement;
 
-            // Load theme from localStorage
-            const currentTheme = localStorage.getItem("theme") || "light";
-            htmlElement.setAttribute("data-theme", currentTheme);
+        //     // Load theme from localStorage
+        //     const currentTheme = localStorage.getItem("theme") || "light";
+        //     htmlElement.setAttribute("data-theme", currentTheme);
 
-            // Update button text
-            themeToggle.textContent = currentTheme === "dark" ? "Light Mode" : "Dark Mode";
+        //     // Update button text
+        //     themeToggle.textContent = currentTheme === "dark" ? "Light Mode" : "Dark Mode";
 
-            themeToggle.addEventListener("click", () => {
-                const newTheme = htmlElement.getAttribute("data-theme") === "light" ? "dark" : "light";
-                htmlElement.setAttribute("data-theme", newTheme);
-                localStorage.setItem("theme", newTheme); // Save theme to localStorage
-                themeToggle.textContent = newTheme === "dark" ? "Light Mode" : "Dark Mode";
-            });
-        });
+        //     themeToggle.addEventListener("click", () => {
+        //         const newTheme = htmlElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+        //         htmlElement.setAttribute("data-theme", newTheme);
+        //         localStorage.setItem("theme", newTheme); // Save theme to localStorage
+        //         themeToggle.textContent = newTheme === "dark" ? "Light Mode" : "Dark Mode";
+        //     });
+        // });
     </script>
     
 </body>

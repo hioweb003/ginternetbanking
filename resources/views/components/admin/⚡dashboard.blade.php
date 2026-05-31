@@ -52,7 +52,7 @@ new #[Layout('layouts::admin',['title' => 'Dashboard'])] class extends Component
             </flux:table.columns>
 
             <flux:table.rows>
-                @foreach ($this->GetInstitution as $row)
+                @foreach ($this->GetInstitution() as $row)
                     <flux:table.row>
                         <flux:table.cell class="max-md:hidden">#{{ $row->code }}</flux:table.cell>
                         <flux:table.cell class="max-md:hidden">{{ date('d-m-Y H:ia',strtotime($row->created_at)) }}</flux:table.cell>
@@ -84,6 +84,5 @@ new #[Layout('layouts::admin',['title' => 'Dashboard'])] class extends Component
                 @endforeach
             </flux:table.rows>
         </flux:table>
-
 
 </div>

@@ -179,7 +179,7 @@ new #[Layout('layouts::app',['title' => 'Success page'])] class extends Componen
                Transaction Receipt
             </flux:button>
 
-              <flux:button href="{{ route('dashboard',['institution' => app('tenant')->name]) }}" variant="ghost" class="w-full cursor-pointer">
+              <flux:button href="{{ route('dashboard',['institution' => $institution_name]) }}" variant="ghost" class="w-full cursor-pointer">
                 Go Home
             </flux:button>
 
