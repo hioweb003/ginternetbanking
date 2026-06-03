@@ -10,7 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
          @PwaHead
         <title>{{ $title ?? config('app.name') }}</title>
-         <link rel="shortcut icon" href="{{ $logo }}">
+         <link rel="shortcut icon" href="{{ storage_path('app/public/' .app('tenant')->logo)}}">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 

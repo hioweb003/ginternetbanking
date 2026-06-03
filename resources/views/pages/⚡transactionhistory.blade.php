@@ -352,7 +352,7 @@ public function DownloadStatement($type){
 
                                 <td class="px-3 py-1 flex justify-between md:table-cell">
                                     <span class="font-semibold md:hidden">Description</span>
-                                    {{ $item['notes'] }}
+                                    {!! $item['notes'] !!}
                                 </td>
 
                                 <td class="px-3 py-1 flex justify-between md:table-cell {{$item['type'] == 'credit' || $item['type'] == 'deposit' ? 'text-green-500' : 'text-red-500'}}">

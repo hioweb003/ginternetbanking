@@ -522,7 +522,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
 
                             <td class="px-3 py-1 flex justify-between md:table-cell">
                                 <span class="font-semibold md:hidden">Description</span>
-                                {{ $item['notes'] }}
+                                {!! $item['notes'] !!}
                             </td>
 
                             <td class="px-3 py-1 flex justify-between md:table-cell {{$item['type'] == 'credit' || $item['type'] == 'deposit' ? 'text-green-500' : 'text-red-500'}}">
@@ -642,7 +642,7 @@ new #[Layout('layouts::app',['title' => 'Dashboard'])] class extends Component
 
                                   <!-- Narration -->
                                 <div class="text-sm text-gray-600 dark:text-white mt-2">
-                                     {{ $mitem['notes'] }}
+                                     {!!$mitem['notes'] !!}
                                 </div>
                                 <!-- Divider -->
                                 <div class="border-t border-gray-700 dark:border-white my-2"></div>

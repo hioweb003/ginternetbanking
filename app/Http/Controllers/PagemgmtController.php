@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Institution;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use EragLaravelPwa\Facades\PWA;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-use Soap\Url;
+
 
 class PagemgmtController extends Controller
 {
@@ -130,19 +130,29 @@ $recpt = Crypt::decryptString(request()->recept);
 
 $receipt = json_decode($recpt,true);
 
-//dd(Url('/').'/'.env('STORAGE_PATH').app('tenant')->logo);
-            // $pdf = pdf::loadView('receipt', [
-            //     'institutionname' => app('tenant')->fullname,
-            //     'receipt' =>  $receipt
-            // ]);
+ $logo = storage_path('app/public/' .app('tenant')->logo);
+ 
+//  app()->environment('production')
+//                 ? url('/').env('STORAGE_PATH') . app('tenant')->logo
+//                 : asset('storage/' . app('tenant')->logo); 
 
-             $pdf = pdf::loadView('receipt', [
+            $data = [
+                'institutionwatermarkname' => app('tenant')->name,
                 'institutionname' => app('tenant')->fullname,
-                'institution_logo' => Url('/').'/'.env('STORAGE_PATH').app('tenant')->logo,
+                'institution_logo' => $logo,
                 'receipt' =>  $receipt
-             ]);
+             ];
 
-            return $pdf->download('receipt.pdf');
+            $pdf = PDF::loadView('receipt', $data);
+
+
+            //  $pdf = pdf::loadView('receipt', [
+            //     'institutionname' => app('tenant')->fullname,
+            //     'institution_logo' => Url('/').'/'.env('STORAGE_PATH').app('tenant')->logo,
+            //     'receipt' =>  $receipt
+            //  ]);
+
+            return $pdf->download('transaction-receipt.pdf');
 
     }
 

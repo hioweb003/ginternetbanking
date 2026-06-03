@@ -23,7 +23,33 @@
             border-radius: 12px;
             border: 1px solid #ddd;
             text-align: center;
+            position: relative;
+             overflow: hidden;
         }
+
+    .watermark-text {
+        position: fixed;
+        top: 45%;
+        left: 10%;
+        font-size: 60px;
+        color: #000;
+        opacity: 0.05;
+        transform: rotate(-30deg);
+        z-index: -1;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+      .wm1 { top: 5%; left: 5%; }
+    .wm2 { top: 5%; right: 5%; }
+
+    .wm3 { top: 20%; left: 30%; }
+    .wm4 { top: 35%; right: 30%; }
+
+    .wm5 { top: 50%; left: 10%; }
+    .wm6 { top: 55%; right: 10%; }
+
+    .wm7 { top: 60%; left: 40%; }
 
         .logo img {
             height: 50px;
@@ -60,7 +86,7 @@
         .row {
             display: table;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .row span {
@@ -96,6 +122,13 @@
 
     <div class="card">
       
+            <div class="watermark-text wm1">{{ ucwords($institutionwatermarkname) }}</div>
+            <div class="watermark-text wm2">{{ ucwords($institutionwatermarkname) }}</div>
+            <div class="watermark-text wm3">{{ ucwords($institutionwatermarkname) }}</div>
+            <div class="watermark-text wm4">{{ ucwords($institutionwatermarkname) }}</div>
+            <div class="watermark-text wm5">{{ ucwords($institutionwatermarkname) }}</div>
+            <div class="watermark-text wm6">{{ ucwords($institutionwatermarkname) }}</div>
+            <div class="watermark-text wm7">{{ ucwords($institutionwatermarkname) }}</div>
         <!-- Logo -->
         <div class="logo">
             <img src="{{ $institution_logo }}" alt="">
@@ -128,17 +161,20 @@
 
             <div class="row">
                 <span>Date</span>
-                <span>{{date('M d, Y',strtotime($receipt['created_at']))}}</span>
+                <span>{{date('M d, Y',strtotime($receipt['created_at']))}} | {{date('h:i A',strtotime($receipt['created_at']))}}</span>
             </div>
 
-            <div class="row">
-                <span>Time</span>
-                <span>{{date('h:i A',strtotime($receipt['created_at']))}}</span>
-            </div>
+               @if (isset($receipt['sessionid']) && !is_null($receipt['sessionid']))
+                <div class="row">
+                    <span>SessionID</span>
+                    <span>{{$receipt['sessionid']}}</span>
+                </div>
+            @endif
+         
 
             <div class="row">
                 <span>Sender</span>
-                <span>
+                <span style="word-break: break-all !important">
                     @if($receipt['type'] == 'credit' || $receipt['type'] == 'deposit')
                         @if(isset($beneficiary[0]))
                             {{ ucwords($beneficiary[0]) }} {{ isset($beneficiary[1]) ? " | " . $beneficiary[1] : "" }}
@@ -153,7 +189,7 @@
 
             <div class="row">
                 <span>Receiver</span>
-                <span>
+                <span style="word-break: break-all !important">
                     {{$receipt['type'] == 'credit' || $receipt['type'] == 'deposit' ? ucwords(session('details')['name'] ?? "") : (isset($beneficiary[0]) ? ucwords($beneficiary[0])." | ".$beneficiary[1] : "") }}
                 </span>
             </div>
@@ -166,7 +202,7 @@
             @endisset
 
             <div class="row">
-                <span>Status</span>
+                <span>Transaction Type</span>
                 <span class="status">
                     {{ $receipt['type'] == 'credit' || $receipt['type'] == 'deposit' ? 'Credit' : 'Debit'}}
                 </span>
@@ -178,6 +214,13 @@
                     {{ $receipt["status"] == "approved" ? 'Success' : ($receipt["status"] == "processing" ? 'Processing' : $receipt["status"])}}
                 </span>
             </div>
+
+             <div class="row">
+                    <span>Narration</span>
+                   <span style="word-break: break-all !important">
+                    {!! $receipt['notes'] !!}
+                </span>
+           </div>
 
         </div>
 

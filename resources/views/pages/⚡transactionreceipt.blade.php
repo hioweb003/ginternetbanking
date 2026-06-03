@@ -162,14 +162,16 @@ new #[Layout('layouts::app',['title' => 'Transaction Receipt'])] class extends C
             @endphp
             <div class="flex justify-between">
                 <span class="text-gray-500">Date</span>
-                <span class="font-medium text-gray-500">{{date('M d, Y',strtotime($receipt['created_at']))}}</span>
+                <span class="font-medium text-gray-500">{{date('d M, Y ',strtotime($receipt['created_at'])) }} | {{ date('h:i A',strtotime($receipt['created_at'])) }}</span>
             </div>
 
-            <div class="flex justify-between">
-                <span class="text-gray-500">Time</span>
-                <span class="font-medium text-gray-500">{{date('h:i A',strtotime($receipt['created_at']))}}</span>
-            </div>
-
+            @if (isset($receipt['sessionid']) && !is_null($receipt['sessionid']))
+                <div class="flex justify-between">
+                    <span class="text-gray-500">SessionID</span>
+                    <span class="font-medium text-gray-500">{{$receipt['sessionid']}}</span>
+                </div>
+            @endif
+         
 
             <div class="flex justify-between">
                 <span class="text-gray-500">Sender</span>
@@ -224,6 +226,13 @@ new #[Layout('layouts::app',['title' => 'Transaction Receipt'])] class extends C
                 </span>
             </div>
 
+                <div class="flex justify-between gap-4">
+                    <span class="text-gray-500">Narration</span>
+                   <div class="font-medium text-gray-500" style="word-break: break-all !important">
+                    {!! $receipt['notes'] !!}
+                </div>
+                </div>
+
         </div>
 
         <!-- Divider -->
@@ -234,18 +243,27 @@ new #[Layout('layouts::app',['title' => 'Transaction Receipt'])] class extends C
             Powered by {{ ucwords($institution_fullname) }} • Secure Payment
         </div>
 
-        <!-- Download Button -->
-        {{-- <a 
+    
+         <div class="flex gap-3 pt-4">
+             <a href="{{ route('dashboard',['institution' => $institution_name]) }}" wire:navigate  variant="ghost" class="w-full cursor-pointer">
+                Go Home
+            </a>
+
+        {{-- <flux:button wire:click.prevent='DownloadReciept' class="w-full bg-linear-to-r py-2 rounded-lg text-white hover:bg-gray-800 transition cursor-pointer block"
+            style="background: linear-gradient(to right, {{ $institution_color  }}, {{ $institution_colortwo }});color: white;">Download Receipt</flux:button> --}}
+
+                <!-- Download Button -->
+        <a 
              href="{{ route('dwolodrecpt',['institution' => $institution_name,'recept' => Crypt::encryptString(json_encode($receipt))]) }}"
             class="w-full bg-linear-to-r py-2 rounded-lg text-white hover:bg-gray-800 transition cursor-pointer block"
             style="background: linear-gradient(to right, {{ $institution_color  }}, {{ $institution_colortwo }});"
         >
            Download Receipt 
-        </a> --}}
-        <flux:button wire:click.prevent='DownloadReciept' class="w-full bg-linear-to-r py-2 rounded-lg text-white hover:bg-gray-800 transition cursor-pointer block"
-            style="background: linear-gradient(to right, {{ $institution_color  }}, {{ $institution_colortwo }});color: white;">Download Receipt</flux:button>
+        </a>
+         </div>
 
     </flux:card>
+
 </div>
 
         </main>

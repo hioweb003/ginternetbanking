@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{$title ?? "Login"}}</title>
  @PwaHead
- <link rel="shortcut icon" href="{{$logo}}">
+ <link rel="shortcut icon" href="{{storage_path('app/public/' .app('tenant')->logo)}}" type="image/x-icon">
 <link rel="manifest" href="{{ route('manifest',['institution' => app('tenant')->name]) }}">
  @vite(['resources/css/app.css', 'resources/js/app.js'])
 
