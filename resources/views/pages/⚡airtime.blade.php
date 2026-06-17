@@ -311,7 +311,7 @@ new #[Layout('layouts::app',['title' => 'Buy Airtime'])] class extends Component
 
           @if ($step == 2)
           <flux:heading size="lg">
-                    <flux:text class="text-center text-2xl">Comfirm Details</flux:text>
+                    <flux:text class="text-center text-2xl">Confirm Details</flux:text>
             </flux:heading>
 
                  <div class="space-y-6 rounded">

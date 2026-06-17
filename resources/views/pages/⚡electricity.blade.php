@@ -358,7 +358,7 @@ public function GetElectricityList(){
 
             @if ($step == 3)
                  <flux:heading size="lg">
-                    <flux:text class="text-center text-2xl">Comfirm Electricity Purchase</flux:text>
+                    <flux:text class="text-center text-2xl">Confirm Electricity Purchase</flux:text>
             </flux:heading>
 
               <div class="space-y-6 rounded">

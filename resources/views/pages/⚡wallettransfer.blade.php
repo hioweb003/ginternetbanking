@@ -308,7 +308,7 @@ new #[Layout('layouts::app',['title' => 'Wallet Transfer'])] class extends Compo
 
                   $exterra = [
                     'ref' => $this->reference,
-                    'bankcode' => $this->bankcode,
+                    'bankcode' => "",
                     'bankname' => $this->institution_fullname,
                     'accountno' => $this->accountnumber,
                     'accountname' => $this->accountName,
@@ -503,7 +503,7 @@ new #[Layout('layouts::app',['title' => 'Wallet Transfer'])] class extends Compo
 
         @if ($step == 3)
             <flux:heading size="lg">
-                    <flux:text class="text-center text-2xl">Comfirm Details</flux:text>
+                    <flux:text class="text-center text-2xl">Confirm Details</flux:text>
             </flux:heading>
 
              <div class="space-y-6 rounded">

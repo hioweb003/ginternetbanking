@@ -397,7 +397,7 @@ public function updatedSelectedVariation($value)
 
             @if ($step == 3)
                 <flux:heading size="lg">
-                    <flux:text class="text-center text-2xl">Comfirm Cable TV Details</flux:text>
+                    <flux:text class="text-center text-2xl">Confirm Cable TV Details</flux:text>
             </flux:heading>
 
          

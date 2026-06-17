@@ -245,7 +245,7 @@ new #[Layout('layouts::app',['title' => 'Transaction Receipt'])] class extends C
 
     
          <div class="flex gap-3 pt-4">
-             <a href="{{ route('dashboard',['institution' => $institution_name]) }}" wire:navigate  variant="ghost" class="w-full cursor-pointer">
+             <a href="{{ route('dashboard',['institution' => $institution_name]) }}" wire:navigate  variant="ghost" class="w-full cursor-pointer bg-gray-200 text-black dark:text-black dark:bg-white shadow py-2 rounded-lg">
                 Go Home
             </a>
 
