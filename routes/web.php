@@ -1,10 +1,6 @@
 <?php
 
 use App\Http\Controllers\PagemgmtController;
-use App\Livewire\Auth\ConfirmOtp;
-use App\Livewire\Auth\Forgetpassword;
-use App\Livewire\Auth\Register;
-use App\Livewire\Auth\Resetpassword;
 use Illuminate\Support\Facades\Route;
 
 
@@ -16,10 +12,19 @@ Route::domain('{institution}.'.env('APP_DOMAIN'))->group(function () {
 
         Route::livewire('/', 'auth.login')->name('home');
          
-        Route::get('/create-account',Register::class)->name('create.account');
-        Route::get('/account-forget-password',Forgetpassword::class)->name('account.forgetpasswrd');
-        Route::get('/account-verfy-otp',ConfirmOtp::class)->name('account.confrimotp');
-        Route::get('/account-reset-password',Resetpassword::class)->name('account.resetpassword');
+        Route::livewire('/create-account','auth.⚡register')->name('create.account');
+        
+        Route::livewire('/account-forget-password',function() {
+          return view('auth.⚡forgetpassword');
+        })->name('account.forgetpasswrd');
+
+        Route::livewire('/account-verfy-otp',function(){
+          return view('auth.⚡confirm-otp');
+        })->name('account.confrimotp');
+
+        Route::livewire('/account-reset-password',function(){
+          return view('auth.⚡resetpassword');
+        })->name('account.resetpassword');
 
         Route::get('/user/logout', [PagemgmtController::class, 'Logout'])->name('userlogout');
         Route::get('/download-transaction-receipt', [PagemgmtController::class, 'downloadReceipt'])->name('dwolodrecpt');

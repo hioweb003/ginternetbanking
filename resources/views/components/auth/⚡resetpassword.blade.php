@@ -1,4 +1,80 @@
-<div>
+<?php
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
+use Livewire\Attributes\Validate;
+use Livewire\Component;
+
+new #[Layout('layouts::guest',['title' => 'Reset Password'])] class extends Component
+{
+    public int $institution_code;
+    public string $institution_color;
+    public string $institution_logo;
+    public string $institution_name;
+
+    #[Validate('required|string|min:8')]
+    public string $password;
+
+     #[Url(history: true)]
+    public string $code;
+ 
+    public function mount(){
+
+        $tenant = app('tenant');
+
+        $this->institution_name = $tenant->name;
+        $this->institution_code = $tenant->code;
+        $this->institution_color = $tenant->color_one;
+        $this->institution_logo = app()->environment('production')
+                ? url(env('STORAGE_PATH') . $tenant->logo)
+                : asset('storage/' . $tenant->logo);
+
+
+    }
+
+
+    public function ResetPassword(){
+
+        $this->validate();
+
+        $otpcode = Crypt::decryptString($this->code);
+
+          $response = Http::withHeaders([
+         ])->post(config('services.api.base_url')."customers/reset-password", [
+            'otpcode' => $otpcode,
+            'password' => $this->password,
+            'institution_code' => $this->institution_code
+        ])->json();
+
+        Log::info('resetpassword response',$response);
+
+        if($response['status'] === true) {
+           
+                   $this->dispatch('notify',
+                        type: 'success',
+                        message: $response["message"],
+                        position: 'center',
+                        button:false
+                    );
+
+            return $this->redirectRoute('home', ['institution' => $this->institution_name],navigate:true);
+
+        } else {
+             $this->dispatch('notify',
+                        type: 'error',
+                        message: $response["message"],
+                        position: 'center',
+                        timer:3000,
+                        button:false
+                    );
+        }
+    }
+};
+?>
+
+<div class="w-full max-w-md">
 
             <!-- Logo -->
             <div class="mb-6">

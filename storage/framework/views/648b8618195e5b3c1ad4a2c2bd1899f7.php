@@ -8,16 +8,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{$title ?? "Login"}}</title>
- @PwaHead
- <link rel="shortcut icon" href="{{storage_path('app/public/' .app('tenant')->logo)}}" type="image/x-icon">
-<link rel="manifest" href="{{ route('manifest',['institution' => app('tenant')->name]) }}">
- @vite(['resources/css/app.css', 'resources/js/app.js'])
+<title><?php echo e($title ?? "Login"); ?></title>
+ <?php echo app(\EragLaravelPwa\Services\PWAService::class)->headTag(); ?>
+ <link rel="shortcut icon" href="<?php echo e(storage_path('app/public/' .app('tenant')->logo)); ?>" type="image/x-icon">
+<link rel="manifest" href="<?php echo e(route('manifest',['institution' => app('tenant')->name])); ?>">
+ <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  @livewireStyles
-        {{-- @fluxAppearance --}}
+  <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>
+
+        
 </head>
 
 <body class="bg-white">
@@ -27,7 +28,7 @@
     <!-- LEFT SIDE (Login Form) -->
     <div class="w-full lg:w-1/3 bg-white flex items-center justify-center px-6 py-12">
 
-                {{ $slot }} 
+                <?php echo e($slot); ?> 
         
     </div>
 
@@ -35,7 +36,7 @@
     <!-- RIGHT SIDE (Image - Hidden on Mobile) -->
     <div class="hidden lg:block lg:w-4/5 relative">
 
-        <img src="{{ asset('img/16105.jpg') }}"
+        <img src="<?php echo e(asset('img/16105.jpg')); ?>"
             class="w-full h-full object-cover"
             alt="Login Image">
 
@@ -43,32 +44,19 @@
         <div class="absolute inset-0 bg-black/10"></div>
 
         <!-- Support Button -->
-        {{-- <div class="absolute bottom-6 right-6 bg-orange-500 text-white p-4 rounded-xl shadow-lg cursor-pointer hover:bg-orange-600 transition">
-            <i class="fa fa-headset text-xl"></i>
-        </div> --}}
+        
 
     </div>
 
 </div>
 
- @livewireScripts
-         {{-- @fluxScripts --}}
-         @RegisterServiceWorkerScript
+ <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scripts(); ?>
 
-         {{-- <script>
-            if (!window.pwaInitialized) {
+         
+         <?php echo app(\EragLaravelPwa\Services\PWAService::class)->registerServiceWorkerScript(); ?>
 
-                    window.pwaInitialized = true;
-
-                    window.deferredPrompt = null;
-
-                    window.addEventListener('beforeinstallprompt', (e) => {
-                        window.deferredPrompt = e;
-                    });
-
-                }
-         </script> --}}
-          <script src="{{asset('js/sweetalert.js')}}" ></script>
+         
+          <script src="<?php echo e(asset('js/sweetalert.js')); ?>" ></script>
 
 <script>
       window.addEventListener('notify',(event) => {
@@ -85,4 +73,4 @@
             });
    </script>
 </body>
-</html>
+</html><?php /**PATH /home/henry/Desktop/htdocs/grubinternetbanking/resources/views/layouts/guest.blade.php ENDPATH**/ ?>

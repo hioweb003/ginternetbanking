@@ -80,7 +80,7 @@ new #[Layout('layouts::guest')] class extends Component
 };
 ?>
 
-<div>
+<div class="w-full max-w-md">
 
       <!-- Logo -->
             <div class="mb-6">

@@ -1,4 +1,14 @@
-<div>
+<?php
+
+use Livewire\Component;
+
+new class extends Component
+{
+    //
+};
+?>
+
+<div class="w-full max-w-md">
             <!-- Logo -->
             <div class="mb-6">
                 <h1 class="text-xl font-bold text-orange-600">
